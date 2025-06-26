@@ -1,119 +1,130 @@
-PhantomARP
- 
-PhantomARP is an advanced ARP spoofing tool designed for educational and ethical penetration testing purposes. It enables man-in-the-middle (MITM) attacks on local area networks by manipulating ARP tables. The tool supports both interactive Jupyter Notebook environments and Linux terminal execution, with features like logging, progress visualization, and IP forwarding management.
+# Phantom
 
-⚠️ Legal Disclaimer: Usage of PhantomARP for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state, and federal laws. The developer assumes no liability and is not responsible for any misuse or damage caused by this program.
+**Phantom** is an advanced ARP spoofing tool designed for educational and ethical penetration testing purposes. It enables **Man-In-The-Middle (MITM)** attacks on local area networks by manipulating ARP tables.
 
-Features
+> ⚠️ **Legal Disclaimer**  
+> Usage of Phantom for attacking targets without prior mutual consent is **illegal**. It is the end user's responsibility to comply with all applicable local, state, and federal laws. The developer assumes no liability and is **not responsible** for any misuse or damage caused by this program.
 
-Cross-Environment Support: Runs in Jupyter Notebook (interactive) and Linux terminal (command-line).
-IP Forwarding Management: Automatically enables/disables IP forwarding on Linux for seamless MITM.
-Configurable Packet Rate: Adjust the frequency of ARP packets for stealth or performance.
-Robust Logging: Logs all actions to timestamped files for auditing and debugging.
-Progress Visualization: Displays a progress bar (using tqdm) for real-time packet-sending feedback.
-Color-Coded Output: Uses colorama for clear, visually appealing console output.
-Error Handling: Validates IPs, handles network errors, and restores ARP tables on exit.
-Network Interface Selection: Supports multiple network interfaces (e.g., eth0, wlan0).
+---
 
-Supported Platforms
+##  Features
 
-Linux: Fully supported, requires root privileges.
-macOS: Supported with modifications for IP forwarding (see Modifications).
-Windows: Partially supported; ARP spoofing may be unreliable due to networking stack limitations.
+- **Cross-Environment Support**: Runs in Jupyter Notebook (interactive) and Linux terminal (command-line).
+- **IP Forwarding Management**: Automatically enables/disables IP forwarding on Linux for seamless MITM.
+- **Configurable Packet Rate**: Adjust the frequency of ARP packets for stealth or performance.
+- **Robust Logging**: Logs all actions to timestamped files for auditing and debugging.
+- **Progress Visualization**: Displays a progress bar (via `tqdm`) for real-time packet-sending feedback.
+- **Color-Coded Output**: Uses `colorama` for visually appealing console output.
+- **Error Handling**: Validates IPs, handles network errors, and restores ARP tables on exit.
+- **Network Interface Selection**: Supports multiple interfaces (e.g., `eth0`, `wlan0`).
 
-Prerequisites
+---
 
-Python 3.x
-Required Python libraries:pip install scapy colorama tqdm
+##  Supported Platforms
 
+| Platform | Support Level | Notes |
+|----------|----------------|-------|
+| **Linux** | ✅ Full | Requires root privileges |
+| **macOS** | ✅ Partial | Requires modification for IP forwarding |
+| **Windows** | ⚠️ Limited | ARP spoofing may be unreliable |
 
-Linux: Root privileges (sudo) for packet manipulation and IP forwarding.
-macOS: Root privileges and modified IP forwarding commands.
-Windows: Npcap (npcap.com) and administrative privileges; less reliable for ARP spoofing.
+---
 
-Installation
+##  Prerequisites
 
-Clone the repository:
+- Python 3.x
+- Install required libraries:
+  ```bash
+  pip install scapy colorama tqdm
+- **Linux:** Root privileges (sudo) for packet manipulation and IP forwarding.
+- **macOS:** Root privileges and modified IP forwarding commands.
+- **Windows:** Npcap (npcap.com) and administrative privileges; less reliable for ARP spoofing.
+
+## Installation
+
+1. Clone the repository
+```bash
 git clone https://github.com/BadBoy0170/PhantomARP.git
 cd PhantomARP
-
-
-Install dependencies:
+```
+2. Install dependencies:
+```bash
 pip install -r requirements.txt
+```
+3. (Windows only) Install Npcap from npcap.com.
 
+## Usage
 
-(Windows only) Install Npcap from npcap.com.
-
-
-Usage
-Linux Terminal
+**Linux Terminal**
 Run the script with command-line arguments:
+```bash
 sudo python3 phantom_arp.py -t <target_ip> -g <gateway_ip> -i <interface> -r <packet_rate>
+```
 
 Example:
+```bash
 sudo python3 phantom_arp.py -t 192.168.1.100 -g 192.168.1.1 -i eth0 -r 2.0
+```
 
-Jupyter Notebook
+## Output
 
-Open phantom_arp.ipynb in Jupyter Notebook:jupyter notebook phantom_arp.ipynb
+- The script displays a colorful banner and legal disclaimer.
+- It enables IP forwarding (Linux) and sends spoofed ARP packets.
+- A progress bar shows the number of packets sent.
+- Logs are saved to phantom_arp_<timestamp>.log.
+- On exit (Ctrl+C), ARP tables are restored, and IP forwarding is disabled.
 
+## Modifications for macOS and Windows
 
-Follow the interactive prompts to enter the target IP, gateway IP, interface, and packet rate.
-
-Output
-
-The script displays a colorful banner and legal disclaimer.
-It enables IP forwarding (Linux) and sends spoofed ARP packets.
-A progress bar shows the number of packets sent.
-Logs are saved to phantom_arp_<timestamp>.log.
-On exit (Ctrl+C), ARP tables are restored, and IP forwarding is disabled.
-
-Modifications for macOS and Windows
-macOS
-Update the IP forwarding functions in phantom_arp.py:
+**macOS**
+- Update the IP forwarding functions in phantom_arp.py:
+```bash
 def enable_ip_forwarding():
     if platform.system() == "Darwin":
         subprocess.run(["sysctl", "-w", "net.inet.ip.forwarding=1"], check=True)
         # ... (other platform logic)
+```
 
-Run with the correct interface (e.g., en0):
+- Run with the correct interface (e.g., en0):
+```bash
 sudo python3 phantom_arp.py -t 192.168.1.100 -g 192.168.1.1 -i en0 -r 2.0
+```
 
-Windows
-Install Npcap and update IP forwarding:
+**Windows**
+- Install Npcap and update IP forwarding:
+```bash
 def enable_ip_forwarding():
     if platform.system() == "Windows":
         subprocess.run(["netsh", "interface", "ipv4", "set", "interface", "forwarding=enabled"], check=True)
         # ... (other platform logic)
+```
 
-List interfaces using scapy:
+- List interfaces using scapy:
+
+```bash
 from scapy.arch.windows import get_windows_if_list
-
-
+```
 Note: ARP spoofing on Windows is less reliable due to networking stack limitations.
 
 Example Log Output
+```bash
 2025-06-26 22:11:00,123 - INFO - Script started - Legal disclaimer displayed
 2025-06-26 22:11:02,456 - INFO - IP forwarding enabled
 2025-06-26 22:11:03,789 - INFO - Sent spoof packet to 192.168.1.100 pretending to be 192.168.1.1
 2025-06-26 22:11:05,012 - INFO - Session completed. Total packets sent: 10
-
-Contributing
-Contributions are welcome! Please follow these steps:
-
-Fork the repository.
-Create a feature branch (git checkout -b feature/YourFeature).
-Commit your changes (git commit -m "Add YourFeature").
-Push to the branch (git push origin feature/YourFeature).
-Open a Pull Request.
-
-See CONTRIBUTING.md for details.
+```
 License
-This project is licensed under under the MIT License - see the LICENSE file for details.
-Contact
 
-GitHub: BadBoy0170
-Issues: Report bugs or suggest features
-
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 Warning: Use PhantomARP responsibly and only in environments where you have explicit permission. Unauthorized use is illegal and unethical.
+
+
+
+
+
+
+
+
+
+
